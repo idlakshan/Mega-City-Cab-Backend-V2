@@ -8,6 +8,7 @@ import lk.icbt.megacity.repo.RoleRepo;
 import lk.icbt.megacity.repo.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@Profile("!test")
 public class DatabaseSeeder implements CommandLineRunner {
 
     private final RoleRepo roleRepo;

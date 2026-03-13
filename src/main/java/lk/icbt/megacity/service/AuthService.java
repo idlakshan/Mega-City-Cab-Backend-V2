@@ -1,9 +1,13 @@
 package lk.icbt.megacity.service;
 
-import lk.icbt.megacity.dto.auth.AuthRequest;
-import lk.icbt.megacity.dto.auth.AuthResponse;
+import jakarta.validation.Valid;
+import lk.icbt.megacity.dto.auth.AuthRequestDTO;
+import lk.icbt.megacity.dto.auth.AuthResponseDTO;
+import lk.icbt.megacity.dto.auth.SignUpRequestDTO;
 
 public interface AuthService {
-    AuthResponse login(AuthRequest request);
-    AuthResponse refreshToken(String refreshToken);
+    AuthResponseDTO login(AuthRequestDTO request);
+    AuthResponseDTO refreshToken(String refreshToken);
+    void signUp(@Valid SignUpRequestDTO signUpRequestDTO);
+
 }

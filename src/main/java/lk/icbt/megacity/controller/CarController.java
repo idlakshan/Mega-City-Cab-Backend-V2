@@ -6,6 +6,7 @@ import lk.icbt.megacity.service.CarService;
 import lk.icbt.megacity.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,20 +19,11 @@ public class CarController {
 
     @PostMapping(consumes = "multipart/form-data")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseUtil saveCar(@ModelAttribute CreateCarRequestDTO carRequestDTO) {
+    public ResponseEntity<ResponseUtil> saveCar(@ModelAttribute CreateCarRequestDTO carRequestDTO) {
 
-        CarDTO dto = new CarDTO();
-        dto.setCategoryId(carRequestDTO.getCategoryId());
-        dto.setCarName(carRequestDTO.getCarName());
-        dto.setCarNumber(carRequestDTO.getCarNumber());
-
-        CarDTO savedCar = carService.saveCar(dto, carRequestDTO.getCarImage());
-
-        return ResponseUtil.builder()
-                .status(HttpStatus.OK.value())
-                .message("Car saved successfully")
-                .data(savedCar)
-                .build();
+        CarDTO carDTO = carService.saveCar(carRequestDTO);
+        return ResponseEntity.status(HttpStatus.OK).
+                body(new ResponseUtil(200, "Car saved successfully", carDTO));
     }
 
 }

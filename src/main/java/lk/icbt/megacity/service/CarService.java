@@ -1,9 +1,9 @@
 package lk.icbt.megacity.service;
 
 import lk.icbt.megacity.dto.CarDTO;
-import org.springframework.web.multipart.MultipartFile;
+import lk.icbt.megacity.dto.request.CreateCarRequestDTO;
 
 public interface CarService {
-    CarDTO saveCar(CarDTO dto, MultipartFile file);
+    CarDTO saveCar(CreateCarRequestDTO carRequestDTO);
 
 }

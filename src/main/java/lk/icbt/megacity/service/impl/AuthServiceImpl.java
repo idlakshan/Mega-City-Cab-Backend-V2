@@ -1,8 +1,10 @@
 package lk.icbt.megacity.service.impl;
 
+import lk.icbt.megacity.dto.UserDTO;
 import lk.icbt.megacity.dto.auth.AuthRequestDTO;
 import lk.icbt.megacity.dto.auth.AuthResponseDTO;
 import lk.icbt.megacity.dto.auth.SignUpRequestDTO;
+import lk.icbt.megacity.dto.pagination.PagedResponseDTO;
 import lk.icbt.megacity.entity.Role;
 import lk.icbt.megacity.entity.User;
 import lk.icbt.megacity.repo.RoleRepo;
@@ -12,12 +14,19 @@ import lk.icbt.megacity.service.CustomUserDetailsService;
 import lk.icbt.megacity.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -43,11 +52,14 @@ public class AuthServiceImpl implements AuthService {
         );
 
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(request.getEmail());
+        User user = userRepo.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         String accessToken = jwtUtil.generateAccessToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
-        return new AuthResponseDTO(accessToken, refreshToken);
+        return new AuthResponseDTO(accessToken, refreshToken, userDTO);
     }
 
     @Override
@@ -55,15 +67,16 @@ public class AuthServiceImpl implements AuthService {
         try {
             String username = jwtUtil.extractUsername(refreshToken);
             UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
             if (!jwtUtil.isTokenValid(refreshToken, userDetails)) {
                 throw new IllegalArgumentException("Invalid or expired refresh token");
             }
 
             String newAccessToken = jwtUtil.generateAccessToken(userDetails);
+            User user = userRepo.findByEmail(username)
+                    .orElseThrow(() -> new RuntimeException("User not found"));
+            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
-            // String newRefreshToken = jwtService.generateRefreshToken(userDetails);
-            return new AuthResponseDTO(newAccessToken, refreshToken);
+            return new AuthResponseDTO(newAccessToken, refreshToken, userDTO);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid refresh token", e);
         }
@@ -95,4 +108,28 @@ public class AuthServiceImpl implements AuthService {
 
         userRepo.save(user);
     }
+
+
+
+    @Override
+    public UserDTO findByEmail(String email) {
+        Optional<User> user = userRepo.findByEmail(email);
+        return modelMapper.map(user,UserDTO.class);
+
+    }
+
+    @Override
+    public PagedResponseDTO<UserDTO> getAllUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> usersPage = userRepo.findAll(pageable);
+
+        List<UserDTO> userDTOs = modelMapper.map(
+                usersPage.getContent(),
+                new TypeToken<List<UserDTO>>() {}.getType()
+        );
+
+        return new PagedResponseDTO<>(new PageImpl<>(userDTOs, pageable, usersPage.getTotalElements()));
+    }
+
+
 }

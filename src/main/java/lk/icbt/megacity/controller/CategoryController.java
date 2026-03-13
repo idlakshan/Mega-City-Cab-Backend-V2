@@ -21,7 +21,6 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     @GetMapping()
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ResponseUtil> getCategories() {
         List<CategoryDTO> allCategories = categoryService.getAllCategories();
         return ResponseEntity.status(HttpStatus.OK)

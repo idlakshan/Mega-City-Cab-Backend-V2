@@ -34,8 +34,8 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ResponseUtil(404, "User not found"));
         }
-
-        return ResponseEntity.ok(new ResponseUtil(200, "Current User", user));
+        return ResponseEntity.status(HttpStatus.OK).
+                body(new ResponseUtil(200, "Current User", user));
     }
 
     @GetMapping("/all-users")
@@ -47,8 +47,8 @@ public class CustomerController {
         int pageNumber = (page > 0) ? page - 1 : 0;
 
         PagedResponseDTO<UserDTO> pagedUsers = customerService.getAllUsers(pageNumber, size);
-        return ResponseEntity.ok(
-                new ResponseUtil(200, "Users retrieved successfully", pagedUsers)
-        );
+
+        return ResponseEntity.status(HttpStatus.OK).
+                body(new ResponseUtil(200, "Users retrieved successfully", pagedUsers));
     }
 }

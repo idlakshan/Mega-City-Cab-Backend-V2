@@ -22,8 +22,8 @@ public class CarController {
     public ResponseEntity<ResponseUtil> saveCar(@ModelAttribute CreateCarRequestDTO carRequestDTO) {
 
         CarDTO carDTO = carService.saveCar(carRequestDTO);
-        return ResponseEntity.status(HttpStatus.OK).
-                body(new ResponseUtil(200, "Car saved successfully", carDTO));
+        return ResponseEntity.status(HttpStatus.CREATED).
+                body(new ResponseUtil(201, "Car saved successfully", carDTO));
     }
 
 }

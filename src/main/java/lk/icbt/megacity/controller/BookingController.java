@@ -13,6 +13,7 @@ import lk.icbt.megacity.service.DriverService;
 import lk.icbt.megacity.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,6 +34,7 @@ public class BookingController {
     private final BookingService bookingService;
     private final CarService carService;
     private final DriverService driverService;
+    private final ModelMapper modelMapper;
 
     @PostMapping
     @PreAuthorize("isAuthenticated()")
@@ -57,22 +59,11 @@ public class BookingController {
         CarDTO assignedCar = availableCarsByCategory.get(random.nextInt(availableCarsByCategory.size()));
         DriverDTO assignedDriver = availableDrivers.get(random.nextInt(availableDrivers.size()));
 
-        AssignedCarDTO car = new AssignedCarDTO(
-                assignedCar.getCarId(),
-                assignedCar.getCarName(),
-                assignedCar.getCarNumber(),
-                assignedCar.getCarImage()
-        );
-
-        AssignedDriverDTO driver = new AssignedDriverDTO(
-                assignedDriver.getDriverId(),
-                assignedDriver.getDriverName(),
-                assignedDriver.getDriverContact(),
-                assignedDriver.getLicenseImage()
-        );
+        AssignedCarDTO assignedCarDTO = modelMapper.map(assignedCar, AssignedCarDTO.class);
+        AssignedDriverDTO assignedDriverDTO = modelMapper.map(assignedDriver, AssignedDriverDTO.class);
 
         BookingAssignmentResponseDTO data =
-                new BookingAssignmentResponseDTO(car, driver);
+                new BookingAssignmentResponseDTO(assignedCarDTO, assignedDriverDTO);
 
         return ResponseEntity.ok(
                 new ResponseUtil(200, "Car and driver assigned successfully!", data)

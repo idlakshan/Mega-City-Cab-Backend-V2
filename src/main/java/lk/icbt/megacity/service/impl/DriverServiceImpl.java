@@ -62,4 +62,11 @@ public class DriverServiceImpl implements DriverService {
         }.getType());
 
     }
+
+    @Override
+    public void updateDriverStatus(DriverDTO dto) {
+        Driver driver = driverRepo.findById(dto.getDriverId()).orElseThrow();
+        driver.setStatus(dto.getStatus());
+        driverRepo.save(driver);
+    }
 }

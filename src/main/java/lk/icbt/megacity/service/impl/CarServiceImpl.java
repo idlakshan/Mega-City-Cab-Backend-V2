@@ -72,4 +72,11 @@ public class CarServiceImpl implements CarService {
         );
 
     }
+
+    @Override
+    public void updateCarStatus(CarDTO dto) {
+        Car car = carRepo.findById(dto.getCarId()).orElseThrow();
+        car.setStatus(dto.getStatus());
+        carRepo.save(car);
+    }
 }

@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CarService {
     CarDTO saveCar(CreateCarRequestDTO carRequestDTO);
-
     List<CarDTO> getAvailableCarsByCategory(Integer categoryId);
+    void updateCarStatus(CarDTO dto);
 
 }

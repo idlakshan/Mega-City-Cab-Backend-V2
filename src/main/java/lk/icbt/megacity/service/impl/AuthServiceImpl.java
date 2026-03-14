@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -58,6 +59,10 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtUtil.generateAccessToken(userDetails);
         String refreshToken = jwtUtil.generateRefreshToken(userDetails);
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+        userDTO.setRoles(roleNames);
 
         return new AuthResponseDTO(accessToken, refreshToken, userDTO);
     }
@@ -113,9 +118,18 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public UserDTO findByEmail(String email) {
-        Optional<User> user = userRepo.findByEmail(email);
-        return modelMapper.map(user,UserDTO.class);
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+
+        userDTO.setRoles(
+                user.getRoles()
+                        .stream()
+                        .map(Role::getName)
+                        .collect(Collectors.toSet())
+        );
+        return userDTO;
     }
 
     @Override

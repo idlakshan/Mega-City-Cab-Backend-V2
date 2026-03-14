@@ -1,5 +1,6 @@
 package lk.icbt.megacity.service.impl;
 
+import lk.icbt.megacity.dto.CarDTO;
 import lk.icbt.megacity.dto.DriverDTO;
 import lk.icbt.megacity.dto.request.CreateDriverDTO;
 import lk.icbt.megacity.entity.Driver;
@@ -7,11 +8,13 @@ import lk.icbt.megacity.repo.DriverRepo;
 import lk.icbt.megacity.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +44,7 @@ public class DriverServiceImpl implements DriverService {
 
             Driver driver = modelMapper.map(dto, Driver.class);
             driver.setLicenseImage(fileName);
-            driver.setStatus("ACTIVE");
+            driver.setStatus("Available");
 
             Driver savedDriver = driverRepo.save(driver);
 
@@ -50,5 +53,13 @@ public class DriverServiceImpl implements DriverService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to upload license image", e);
         }
+    }
+
+    @Override
+    public List<DriverDTO> getAvailableDrivers() {
+        List<Driver> availableDrivers = driverRepo.getAvailableDrivers();
+        return modelMapper.map(availableDrivers, new TypeToken<List<DriverDTO>>() {
+        }.getType());
+
     }
 }

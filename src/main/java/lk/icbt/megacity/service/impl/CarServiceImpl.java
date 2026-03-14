@@ -1,6 +1,7 @@
 package lk.icbt.megacity.service.impl;
 
 import lk.icbt.megacity.dto.CarDTO;
+import lk.icbt.megacity.dto.UserDTO;
 import lk.icbt.megacity.dto.request.CreateCarRequestDTO;
 import lk.icbt.megacity.entity.Car;
 import lk.icbt.megacity.entity.Category;
@@ -9,9 +10,11 @@ import lk.icbt.megacity.repo.CategoryRepo;
 import lk.icbt.megacity.service.CarService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 
 @Service
@@ -49,7 +52,7 @@ public class CarServiceImpl implements CarService {
                     .carName(carRequestDTO.getCarName())
                     .carNumber(carRequestDTO.getCarNumber())
                     .carImage(fileName)
-                    .status("ACTIVE")
+                    .status("Available")
                     .category(category)
                     .build();
 
@@ -58,5 +61,15 @@ public class CarServiceImpl implements CarService {
         } catch (IOException e) {
             throw new RuntimeException("Failed to save car image: " + e.getMessage());
         }
+    }
+
+    @Override
+    public List<CarDTO> getAvailableCarsByCategory(Integer categoryId) {
+        List<Car> availableCarsByCategory = carRepo.getAvailableCarsByCategory(categoryId);
+        return modelMapper.map(
+                availableCarsByCategory,
+                new TypeToken<List<CarDTO>>() {}.getType()
+        );
+
     }
 }

@@ -30,7 +30,7 @@ public class CheckoutServiceImpl implements CheckoutService {
 
         BookingDTO bookingDTO = modelMapper.map(request, BookingDTO.class);
         bookingDTO.setStatus("InProgress");
-        bookingDTO.setBookingDateTime(Timestamp.valueOf(request.getBookingDateTime()));
+        bookingDTO.setBookingDateTime(request.getBookingDateTime());
 
         // Save booking
         int bookingId = bookingService.saveBooking(bookingDTO);
@@ -53,7 +53,7 @@ public class CheckoutServiceImpl implements CheckoutService {
         paymentDTO.setAmount(request.getAmount());
         paymentDTO.setPaymentMethod("Stripe");
         paymentDTO.setPaymentStatus("Success");
-        paymentDTO.setPaymentDate(Timestamp.valueOf(LocalDateTime.now()));
+        paymentDTO.setPaymentDate(LocalDateTime.now());
         paymentService.savePayment(paymentDTO);
 
         return bookingId;

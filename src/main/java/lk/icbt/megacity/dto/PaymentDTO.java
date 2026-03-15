@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -17,5 +18,5 @@ public class PaymentDTO {
     private double amount;
     private String paymentMethod;
     private String paymentStatus;
-    private Timestamp paymentDate;
+    private LocalDateTime paymentDate;
 }

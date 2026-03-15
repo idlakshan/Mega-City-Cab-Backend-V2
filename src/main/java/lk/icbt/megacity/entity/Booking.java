@@ -34,4 +34,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
+
+    @OneToOne(mappedBy = "booking", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Payment payment;
 }

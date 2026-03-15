@@ -13,4 +13,5 @@ public interface CarRepo extends JpaRepository<Car,Integer> {
 
     @Query(value = "SELECT * FROM cars WHERE category_id = :categoryId AND status = 'Available'", nativeQuery = true)
     List<Car> getAvailableCarsByCategory(@Param("categoryId") Integer categoryId);
+    int countByStatus(String status);
 }

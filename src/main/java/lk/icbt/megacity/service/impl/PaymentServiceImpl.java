@@ -25,7 +25,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setAmount(dto.getAmount());
         payment.setPaymentMethod(dto.getPaymentMethod());
         payment.setPaymentStatus(dto.getPaymentStatus());
-        payment.setPaymentDate(dto.getPaymentDate().toLocalDateTime());
+        payment.setPaymentDate(dto.getPaymentDate());
 
         paymentRepo.save(payment);
     }

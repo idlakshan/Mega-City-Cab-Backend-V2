@@ -1,6 +1,7 @@
 package lk.icbt.megacity.service.impl;
 
 import lk.icbt.megacity.dto.CarDTO;
+import lk.icbt.megacity.dto.CategoryDTO;
 import lk.icbt.megacity.dto.UserDTO;
 import lk.icbt.megacity.dto.request.CreateCarRequestDTO;
 import lk.icbt.megacity.entity.Car;
@@ -78,5 +79,17 @@ public class CarServiceImpl implements CarService {
         Car car = carRepo.findById(dto.getCarId()).orElseThrow();
         car.setStatus(dto.getStatus());
         carRepo.save(car);
+    }
+
+    @Override
+    public int getAvailableVehicles() {
+        return carRepo.countByStatus("Available");
+    }
+
+    @Override
+    public List<CarDTO> getAllCars() {
+        List<Car> all = carRepo.findAll();
+
+        return modelMapper.map(all,new TypeToken<List<CarDTO>>() {}.getType());
     }
 }

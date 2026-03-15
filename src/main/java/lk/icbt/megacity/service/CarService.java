@@ -10,4 +10,8 @@ public interface CarService {
     List<CarDTO> getAvailableCarsByCategory(Integer categoryId);
     void updateCarStatus(CarDTO dto);
 
+    int getAvailableVehicles();
+
+    List<CarDTO> getAllCars();
+
 }

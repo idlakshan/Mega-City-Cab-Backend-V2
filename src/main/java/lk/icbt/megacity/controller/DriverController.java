@@ -25,7 +25,6 @@ public class DriverController {
             @ModelAttribute CreateDriverDTO dto,
             @RequestParam MultipartFile licenseImage
     ) {
-
         DriverDTO savedDriver = driverService.saveDriver(dto, licenseImage);
 
         return ResponseEntity.status(HttpStatus.CREATED)

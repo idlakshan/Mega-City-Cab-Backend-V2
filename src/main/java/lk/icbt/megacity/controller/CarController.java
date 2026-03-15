@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v2/car")
 @RequiredArgsConstructor
@@ -24,6 +26,14 @@ public class CarController {
         CarDTO carDTO = carService.saveCar(carRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).
                 body(new ResponseUtil(201, "Car saved successfully", carDTO));
+    }
+
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> getAllCars() {
+        List<CarDTO> allCars = carService.getAllCars();
+        return ResponseEntity.status(HttpStatus.OK).
+                body(new ResponseUtil(200, "Cars retrieved successfully", allCars));
     }
 
 }

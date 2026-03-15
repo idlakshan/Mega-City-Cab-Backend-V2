@@ -137,13 +137,20 @@ public class AuthServiceImpl implements AuthService {
         Pageable pageable = PageRequest.of(page, size);
         Page<User> usersPage = userRepo.findAll(pageable);
 
-        List<UserDTO> userDTOs = modelMapper.map(
-                usersPage.getContent(),
-                new TypeToken<List<UserDTO>>() {}.getType()
-        );
+        List<UserDTO> userDTOs = usersPage.getContent().stream()
+                .map(user -> {
+                    UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+                    Set<String> roleNames = user.getRoles().stream()
+                            .map(Role::getName)
+                            .collect(Collectors.toSet());
+                    userDTO.setRoles(roleNames);
+                    return userDTO;
+                })
+                .collect(Collectors.toList());
 
         return new PagedResponseDTO<>(new PageImpl<>(userDTOs, pageable, usersPage.getTotalElements()));
     }
+
 
 
 }

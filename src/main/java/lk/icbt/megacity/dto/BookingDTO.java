@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Setter
 @Getter
@@ -18,7 +19,7 @@ public class BookingDTO {
     private int driverId;
     private String pickupLocation;
     private String dropLocation;
-    private Timestamp bookingDateTime;
+    private LocalDateTime bookingDateTime;
     private String customerName;
     private String customerEmail;
     private String customerPhone;

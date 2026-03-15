@@ -69,4 +69,9 @@ public class DriverServiceImpl implements DriverService {
         driver.setStatus(dto.getStatus());
         driverRepo.save(driver);
     }
+
+    @Override
+    public int getActiveDrivers() {
+        return driverRepo.countByStatus("Available");
+    }
 }

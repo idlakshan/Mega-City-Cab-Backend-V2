@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v2/category")
@@ -25,5 +27,23 @@ public class CategoryController {
         List<CategoryDTO> allCategories = categoryService.getAllCategories();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseUtil(200, "Categories retrieved successfully",allCategories));
+    }
+
+    @GetMapping("/category-name")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> getAllCategoryNames() {
+        List<CategoryDTO> allCategories = categoryService.getAllCategories();
+
+        List<Map<String, Object>> categoryNames = allCategories.stream()
+                .map(category -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("id", category.getId());
+                    map.put("name", category.getName());
+                    return map;
+                })
+                .toList();
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseUtil(200, "Categories retrieved successfully", categoryNames));
     }
 }

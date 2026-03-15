@@ -10,4 +10,6 @@ public interface DriverService {
     DriverDTO saveDriver(CreateDriverDTO dto, MultipartFile licenseImage);
     List<DriverDTO> getAvailableDrivers();
     void updateDriverStatus(DriverDTO dto);
+    int getActiveDrivers();
+
 }

@@ -13,5 +13,6 @@ public interface AuthService {
     void signUp(@Valid SignUpRequestDTO signUpRequestDTO);
     UserDTO findByEmail(String email);
     PagedResponseDTO<UserDTO> getAllUsers(int page, int size);
+    boolean updateUser(UserDTO userDTO);
 
 }

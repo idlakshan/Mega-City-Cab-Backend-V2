@@ -151,6 +151,21 @@ public class AuthServiceImpl implements AuthService {
         return new PagedResponseDTO<>(new PageImpl<>(userDTOs, pageable, usersPage.getTotalElements()));
     }
 
+    @Override
+    public boolean updateUser(UserDTO userDTO) {
+        Optional<User> optionalUser = userRepo.findById(userDTO.getId());
+        if (optionalUser.isPresent()) {
+            User user = optionalUser.get();
+
+            if (userDTO.getName() != null) user.setName(userDTO.getName());
+            if (userDTO.getEmail() != null) user.setEmail(userDTO.getEmail());
+            if (userDTO.getPhone() != null) user.setPhone(userDTO.getPhone());
+
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
 
 
 }

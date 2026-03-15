@@ -9,6 +9,10 @@ import lk.icbt.megacity.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -28,5 +32,22 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setPaymentDate(dto.getPaymentDate());
 
         paymentRepo.save(payment);
+    }
+
+    @Override
+    public Map<String, Double> getPaymentHistoryByUserId(Integer userId) {
+        List<Payment> payments = paymentRepo.findPaymentsByUserId(userId);
+
+        Map<String, Double> paymentHistory = new LinkedHashMap<>();
+
+        for (Payment payment : payments) {
+            if (payment.getPaymentDate() != null) {
+                String date = payment.getPaymentDate().toLocalDate().toString();
+                paymentHistory.put(date,
+                        paymentHistory.getOrDefault(date, 0.0) + payment.getAmount());
+            }
+        }
+
+        return paymentHistory;
     }
 }

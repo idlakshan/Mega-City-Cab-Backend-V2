@@ -4,14 +4,14 @@ import jakarta.validation.Valid;
 import lk.icbt.megacity.dto.BookingDTO;
 import lk.icbt.megacity.dto.CarDTO;
 import lk.icbt.megacity.dto.DriverDTO;
+import lk.icbt.megacity.dto.UserDTO;
 import lk.icbt.megacity.dto.request.BookingRequestDTO;
 import lk.icbt.megacity.dto.request.BookingStatusUpdateRequestDTO;
 import lk.icbt.megacity.dto.response.AssignedCarDTO;
 import lk.icbt.megacity.dto.response.AssignedDriverDTO;
 import lk.icbt.megacity.dto.response.BookingAssignmentResponseDTO;
-import lk.icbt.megacity.service.BookingService;
-import lk.icbt.megacity.service.CarService;
-import lk.icbt.megacity.service.DriverService;
+import lk.icbt.megacity.dto.response.UserStatsDTO;
+import lk.icbt.megacity.service.*;
 import lk.icbt.megacity.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
 
@@ -19,6 +19,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +36,8 @@ public class BookingController {
     private final BookingService bookingService;
     private final CarService carService;
     private final DriverService driverService;
+    private final AuthService authService;
+    private final PaymentService paymentService;
     private final ModelMapper modelMapper;
 
     @PostMapping
@@ -121,6 +125,55 @@ public class BookingController {
 
         return ResponseEntity.ok(
                 new ResponseUtil(200, message, null)
+        );
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/user-stats")
+    public ResponseEntity<ResponseUtil> getUserStats(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDTO user = authService.findByEmail(userDetails.getUsername());
+        Integer userId = user.getId();
+
+        int totalRides = bookingService.getTotalBookingsByUserId(userId);
+        double totalSpending = bookingService.getTotalSpendingByUserId(userId);
+        String activeSince = bookingService.getActiveSinceByUserId(userId);
+        String favoriteLocation = bookingService.getFavoriteLocationByUserId(userId);
+
+        UserStatsDTO data = new UserStatsDTO(
+                totalRides,
+                totalSpending,
+                activeSince != null ? activeSince : "2025",
+                favoriteLocation != null ? favoriteLocation : "No current locations"
+        );
+
+        return ResponseEntity.ok(
+                new ResponseUtil(200, "User stats retrieved successfully!", data)
+        );
+    }
+
+    @GetMapping("/payment-history")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ResponseUtil> getPaymentHistory(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDTO user = authService.findByEmail(userDetails.getUsername());
+        Integer userId = user.getId();
+
+        Map<String, Double> paymentHistory = paymentService.getPaymentHistoryByUserId(userId);
+
+        return ResponseEntity.ok(
+                new ResponseUtil(200, "Payment history retrieved successfully!", paymentHistory)
+        );
+    }
+
+    @GetMapping("/booking-details")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ResponseUtil> getBookingDetails(@AuthenticationPrincipal UserDetails userDetails) {
+        UserDTO user = authService.findByEmail(userDetails.getUsername());
+        Integer userId = user.getId();
+
+        List<BookingDTO> userBookings = bookingService.getBookingsDetailsByUserId(userId);
+
+        return ResponseEntity.ok(
+                new ResponseUtil(200, "Booking Details retrieved successfully!", userBookings)
         );
     }
 

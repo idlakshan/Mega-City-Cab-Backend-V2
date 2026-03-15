@@ -74,4 +74,25 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).
                 body(new ResponseUtil(200, "Users retrieved successfully", pagedUsers));
     }
+
+    @PutMapping("/update-user")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<ResponseUtil> updateUser(@RequestBody UserDTO userDTO, @AuthenticationPrincipal UserDetails userDetails ) {
+
+        UserDTO user = authService.findByEmail(userDetails.getUsername());
+        Integer userId = user.getId();
+
+        userDTO.setId(userId);
+
+        boolean updated = authService.updateUser(userDTO);
+
+        if (updated) {
+            return ResponseEntity.ok(
+                    new ResponseUtil(200, "User updated successfully!", null)
+            );
+        } else {
+            return ResponseEntity.status(500)
+                    .body(new ResponseUtil(500, "Failed to update user.", null));
+        }
+    }
 }

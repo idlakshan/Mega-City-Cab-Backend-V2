@@ -9,6 +9,7 @@ import lk.icbt.megacity.entity.Category;
 import lk.icbt.megacity.repo.CarRepo;
 import lk.icbt.megacity.repo.CategoryRepo;
 import lk.icbt.megacity.service.CarService;
+import lk.icbt.megacity.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -25,8 +26,8 @@ public class CarServiceImpl implements CarService {
     private final CarRepo carRepo;
     private final CategoryRepo categoryRepo;
     private final ModelMapper modelMapper;
+    private final CloudinaryService cloudinaryService;
 
-    private final String uploadDir = "D:/Projects/ICBT/Mega City Cab/Backend-V2/megacity/uploads/cars/";
 
     @Override
     public CarDTO saveCar(CreateCarRequestDTO carRequestDTO) {
@@ -35,33 +36,24 @@ public class CarServiceImpl implements CarService {
             throw new RuntimeException("Car number already exists");
         }
 
-        try {
-            File folder = new File(uploadDir);
-            if (!folder.exists()) {
-                folder.mkdirs();
-            }
-            String fileName = System.currentTimeMillis() + "_" +
-                    carRequestDTO.getCarImage().getOriginalFilename();
+        String imageUrl = cloudinaryService.uploadFile(
+                carRequestDTO.getCarImage(),
+                "cars"
+        );
 
-            File saveFile = new File(uploadDir + fileName);
-            carRequestDTO.getCarImage().transferTo(saveFile);
+        Category category = categoryRepo.findById(carRequestDTO.getCategoryId())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-            Category category = categoryRepo.findById(carRequestDTO.getCategoryId())
-                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        Car car = Car.builder()
+                .carName(carRequestDTO.getCarName())
+                .carNumber(carRequestDTO.getCarNumber())
+                .carImage(imageUrl)
+                .status("Available")
+                .category(category)
+                .build();
 
-            Car car = Car.builder()
-                    .carName(carRequestDTO.getCarName())
-                    .carNumber(carRequestDTO.getCarNumber())
-                    .carImage(fileName)
-                    .status("Available")
-                    .category(category)
-                    .build();
+        return modelMapper.map(carRepo.save(car), CarDTO.class);
 
-            return modelMapper.map(carRepo.save(car), CarDTO.class);
-
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save car image: " + e.getMessage());
-        }
     }
 
     @Override

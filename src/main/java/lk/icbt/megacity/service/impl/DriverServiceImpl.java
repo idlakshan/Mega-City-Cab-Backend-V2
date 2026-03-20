@@ -65,4 +65,10 @@ public class DriverServiceImpl implements DriverService {
     public int getActiveDrivers() {
         return driverRepo.countByStatus("Available");
     }
+
+    @Override
+    public DriverDTO getDriverById(int id) {
+        Driver driverByDriverId = driverRepo.getDriverByDriverId(id);
+        return modelMapper.map(driverByDriverId,DriverDTO.class);
+    }
 }

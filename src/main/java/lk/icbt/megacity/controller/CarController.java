@@ -2,6 +2,8 @@ package lk.icbt.megacity.controller;
 
 import lk.icbt.megacity.dto.CarDTO;
 import lk.icbt.megacity.dto.request.CreateCarRequestDTO;
+import lk.icbt.megacity.dto.request.UpdateCarRequestDTO;
+import lk.icbt.megacity.dto.response.CarWithCategoryDTO;
 import lk.icbt.megacity.service.CarService;
 import lk.icbt.megacity.util.ResponseUtil;
 import lombok.RequiredArgsConstructor;
@@ -34,6 +36,36 @@ public class CarController {
         List<CarDTO> allCars = carService.getAllCars();
         return ResponseEntity.status(HttpStatus.OK).
                 body(new ResponseUtil(200, "Cars retrieved successfully", allCars));
+    }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> getCarById(@PathVariable Integer id){
+        CarDTO car = carService.getCarById(id);
+        return ResponseEntity.status(HttpStatus.OK).
+                body(new ResponseUtil(200, "Car retrieved successfully", car));
+    }
+
+    @GetMapping("/{id}/with-category")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> getCarWithCategoryByCarId(@PathVariable Integer id) {
+
+        CarWithCategoryDTO car = carService.getCarWithCategoryByCarId(id);
+
+        return ResponseEntity.ok(
+                new ResponseUtil(200, "Car with category retrieved successfully", car)
+        );
+    }
+
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> updateCar(
+            @PathVariable Integer id,
+            @ModelAttribute UpdateCarRequestDTO updateCarRequestDTO) {
+        updateCarRequestDTO.setCarId(id);
+
+        CarDTO updatedCar = carService.updateCar(updateCarRequestDTO);
+        return ResponseEntity.ok(new ResponseUtil(200, "Car updated successfully", updatedCar));
     }
 
 }

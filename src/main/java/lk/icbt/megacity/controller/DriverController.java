@@ -30,4 +30,12 @@ public class DriverController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ResponseUtil(201, "Driver saved successfully", savedDriver));
     }
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> getDriverById(@PathVariable int id) {
+        DriverDTO driver = driverService.getDriverById(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseUtil(200, "Driver retrieved successfully", driver));
+    }
 }

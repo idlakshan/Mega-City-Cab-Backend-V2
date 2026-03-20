@@ -11,5 +11,5 @@ public interface DriverService {
     List<DriverDTO> getAvailableDrivers();
     void updateDriverStatus(DriverDTO dto);
     int getActiveDrivers();
-
+    DriverDTO getDriverById(int id);
 }

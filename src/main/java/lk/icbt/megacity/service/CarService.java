@@ -2,6 +2,8 @@ package lk.icbt.megacity.service;
 
 import lk.icbt.megacity.dto.CarDTO;
 import lk.icbt.megacity.dto.request.CreateCarRequestDTO;
+import lk.icbt.megacity.dto.request.UpdateCarRequestDTO;
+import lk.icbt.megacity.dto.response.CarWithCategoryDTO;
 
 import java.util.List;
 
@@ -14,4 +16,9 @@ public interface CarService {
 
     List<CarDTO> getAllCars();
 
+    CarDTO getCarById(int id);
+
+    CarWithCategoryDTO getCarWithCategoryByCarId(Integer id);
+
+    CarDTO updateCar(UpdateCarRequestDTO updateCarRequestDTO);
 }

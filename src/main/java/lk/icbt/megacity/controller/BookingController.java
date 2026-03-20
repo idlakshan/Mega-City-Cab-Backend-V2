@@ -96,7 +96,7 @@ public class BookingController {
         Map<String, Object> stats = Map.of(
                 "totalBookings", bookingService.getTotalBookings(),
                 "totalRevenue", bookingService.getTotalRevenue(),
-                "activeDrivers", driverService.getActiveDrivers(),        // get active drivers count
+                "activeDrivers", driverService.getActiveDrivers(),
                 "availableVehicles", carService.getAvailableVehicles()
         );
         return ResponseEntity.ok(new ResponseUtil(200, "Booking statistics retrieved successfully!", stats));

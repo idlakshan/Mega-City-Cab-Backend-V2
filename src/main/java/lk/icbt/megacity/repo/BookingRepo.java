@@ -10,4 +10,5 @@ public interface BookingRepo extends JpaRepository<Booking,Integer> {
 
     List<Booking> findByUserId(int userId);
     List<Booking> findByStatus(String status);
+    Booking getBookingByBookingId(int i);
 }

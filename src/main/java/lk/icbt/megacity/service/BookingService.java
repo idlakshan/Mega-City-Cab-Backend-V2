@@ -33,4 +33,7 @@ public interface BookingService {
     String getFavoriteLocationByUserId(int userId);
 
     String updateBookingStatus(BookingStatusUpdateRequestDTO requestDTO);
+
+    BookingDTO getBookingById(int i);
+
 }

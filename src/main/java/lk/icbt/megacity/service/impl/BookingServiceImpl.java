@@ -184,4 +184,10 @@ public class BookingServiceImpl implements BookingService {
                 : "Booking status updated to Canceled and car/driver status updated to Available.";
     }
 
+    @Override
+    public BookingDTO getBookingById(int i) {
+        Booking bookingByBookingId = bookingRepo.getBookingByBookingId(i);
+        return modelMapper.map(bookingByBookingId,BookingDTO.class);
+    }
+
 }

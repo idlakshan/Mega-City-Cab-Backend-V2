@@ -30,4 +30,7 @@ public interface CarRepo extends JpaRepository<Car,Integer> {
     WHERE c.car_id = :id
 """, nativeQuery = true)
     CarWithCategoryProjection getCarWithCategoryByCarId(@Param("id") Integer id);
+
+    @Query("SELECT COUNT(b) > 0 FROM Booking b WHERE b.car.carId = :carId")
+    boolean hasBookings(@Param("carId") Integer carId);
 }

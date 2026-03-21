@@ -10,6 +10,7 @@ import lk.icbt.megacity.dto.request.UpdateCarRequestDTO;
 import lk.icbt.megacity.dto.response.CarWithCategoryDTO;
 import lk.icbt.megacity.entity.Car;
 import lk.icbt.megacity.entity.Category;
+import lk.icbt.megacity.exception.CarHasBookingsException;
 import lk.icbt.megacity.repo.CarRepo;
 import lk.icbt.megacity.repo.CategoryRepo;
 import lk.icbt.megacity.service.CarService;
@@ -158,5 +159,20 @@ public class CarServiceImpl implements CarService {
         Car updatedCar = carRepo.save(existingCar);
 
         return modelMapper.map(updatedCar, CarDTO.class);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCar(Integer carId) {
+        Car car = carRepo.findById(carId)
+                .orElseThrow(() -> new RuntimeException("Car not found with id: " + carId));
+
+        boolean hasBookings = carRepo.hasBookings(carId);
+
+        if (hasBookings) {
+            throw new CarHasBookingsException("Cannot delete car with ID " + carId + " because it has existing bookings. Please archive it instead.");
+        }
+
+        carRepo.delete(car);
     }
 }

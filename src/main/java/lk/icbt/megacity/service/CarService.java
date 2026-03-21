@@ -21,4 +21,6 @@ public interface CarService {
     CarWithCategoryDTO getCarWithCategoryByCarId(Integer id);
 
     CarDTO updateCar(UpdateCarRequestDTO updateCarRequestDTO);
+
+    void deleteCar(Integer carId);
 }

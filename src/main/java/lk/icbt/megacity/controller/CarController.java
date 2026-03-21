@@ -68,4 +68,11 @@ public class CarController {
         return ResponseEntity.ok(new ResponseUtil(200, "Car updated successfully", updatedCar));
     }
 
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ResponseUtil> deleteCar(@PathVariable Integer id) {
+        carService.deleteCar(id);
+        return ResponseEntity.ok(new ResponseUtil(200, "Car deleted successfully", null));
+    }
+
 }

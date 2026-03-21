@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Receipt #${receiptNumber}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', monospace;
+            background: #f5f5f5;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .receipt-container {
+            max-width: 300px;
+            width: 100%;
+            background: white;
+            padding: 15px 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+
+        /* Store Header */
+        .store-header {
+            text-align: center;
+            border-bottom: 1px dashed #333;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .store-name {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .store-tagline {
+            font-size: 9px;
+            color: #666;
+            margin-top: 3px;
+        }
+
+        .receipt-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 5px;
+            text-transform: uppercase;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3px;
+        }
+
+        /* Receipt Meta */
+        .receipt-meta {
+            font-size: 10px;
+            border-bottom: 1px dashed #999;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+        }
+
+        .meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .meta-label {
+            color: #555;
+        }
+
+        .meta-value {
+            font-weight: bold;
+        }
+
+        /* Car Image - Compact */
+        .car-image-compact {
+            text-align: center;
+            margin: 8px 0;
+            padding: 5px;
+            background: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .car-image-compact img {
+            max-width: 150px;
+            max-height: 80px;
+            border-radius: 4px;
+        }
+
+        /* Details Section */
+        .details-section {
+            margin: 10px 0;
+            border-top: 1px dashed #999;
+            border-bottom: 1px dashed #999;
+            padding: 8px 0;
+        }
+
+        .detail-row {
+            display: flex;
+            font-size: 10px;
+            margin-bottom: 5px;
+            line-height: 1.3;
+        }
+
+        .detail-label {
+            flex: 0 0 90px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .detail-value {
+            flex: 1;
+        }
+
+        .highlight-row {
+            background: #f0f0f0;
+            padding: 3px 5px;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+
+        /* Payment Row */
+        .payment-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            margin: 5px 0;
+        }
+
+        .payment-label {
+            font-weight: bold;
+        }
+
+        /* Status Badge - Compact */
+        .status-badge-compact {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 8px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .status-success {
+            background: #10b981;
+            color: white;
+        }
+
+        .status-pending {
+            background: #f59e0b;
+            color: white;
+        }
+
+        /* Amount Total */
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 10px 0;
+            padding: 5px 0;
+            border-top: 2px solid #333;
+            border-bottom: 2px solid #333;
+        }
+
+        .total-label {
+            text-transform: uppercase;
+        }
+
+        .total-value {
+            color: #000;
+        }
+
+        /* Footer */
+        .receipt-footer {
+            text-align: center;
+            font-size: 8px;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed #999;
+        }
+
+        .footer-line {
+            margin-bottom: 3px;
+            color: #666;
+        }
+
+        .thank-you {
+            font-size: 10px;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        /* Divider */
+        .dashed-divider {
+            border-top: 1px dashed #999;
+            margin: 5px 0;
+        }
+
+        /* Star Rating Style */
+        .stars {
+            color: #fbbf24;
+            font-size: 8px;
+            letter-spacing: 1px;
+        }
+
+        /* Barcode style (just for design) */
+        .barcode {
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            letter-spacing: 2px;
+            text-align: center;
+            margin: 5px 0;
+            color: #333;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .receipt-container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="receipt-container">
+    <div class="store-header">
+        <div class="store-name">MegaCity Cab</div>
+        <div class="store-tagline">Your Trusted Travel Partner</div>
+        <div class="receipt-title">PAYMENT RECEIPT</div>
+    </div>
+
+    <div class="receipt-meta">
+        <div class="meta-row">
+            <span class="meta-label">Receipt #:</span>
+            <span class="meta-value">${receiptNumber}</span>
+        </div>
+        <div class="meta-row">
+            <span class="meta-label">Date:</span>
+            <span class="meta-value">${receiptDate}</span>
+        </div>
+        <div class="meta-row">
+            <span class="meta-label">Time:</span>
+            <span class="meta-value">${receiptTime}</span>
+        </div>
+    </div>
+
+    <div class="details-section">
+        <div class="detail-row">
+            <span class="detail-label">Booking ID:</span>
+            <span class="detail-value"><strong>#${bookingId}</strong></span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Customer:</span>
+            <span class="detail-value">${customerName}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Contact:</span>
+            <span class="detail-value">${customerPhone}</span>
+        </div>
+        <div class="dashed-divider"></div>
+        <div class="detail-row">
+            <span class="detail-label">Pickup:</span>
+            <span class="detail-value">${pickupLocation}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Drop:</span>
+            <span class="detail-value">${dropLocation}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Date/Time:</span>
+            <span class="detail-value">${bookingDateTime}</span>
+        </div>
+    </div>
+
+
+    <div class="details-section" style="border-top: none;">
+        <div class="highlight-row">
+            <div class="detail-row">
+                <span class="detail-label">Car:</span>
+                <span class="detail-value"><strong>${carName}</strong> (${carNumber})</span>
+            </div>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Driver:</span>
+            <span class="detail-value">${driverName}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Driver:</span>
+            <span class="detail-value">${driverContact}</span>
+        </div>
+    </div>
+
+    <div class="details-section" style="border-top: none;">
+        <div class="detail-row">
+            <span class="detail-label">Payment Method:</span>
+            <span class="detail-value">${paymentMethod}</span>
+        </div>
+        <div class="detail-row">
+            <span class="detail-label">Payment Date:</span>
+            <span class="detail-value">${paymentDate}</span>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">Payment Status:</span>
+            <span class="status-badge-compact ${paymentStatusClass}">${paymentStatus}</span>
+        </div>
+        <div class="payment-row">
+            <span class="payment-label">Booking Status:</span>
+            <span class="detail-value">${bookingStatus}</span>
+        </div>
+    </div>
+
+    <div class="total-row">
+        <span class="total-label">TOTAL:</span>
+        <span class="total-value">LKR ${amount}</span>
+    </div>
+
+    <div class="receipt-footer">
+        <div class="thank-you">Thank you for riding with us!</div>
+        <div class="footer-line">This serves as your payment receipt</div>
+        <div class="footer-line">For queries: support@megacitycab.com</div>
+        <div class="footer-line">Tel: +94 11 234 5678</div>
+
+        <div class="stars">★★★★★</div>
+
+        <div class="barcode">|||| ||| |||| ||</div>
+
+        <div class="footer-line" style="margin-top: 5px;">${receiptNumber}</div>
+    </div>
+</div>
+</body>
+</html>
